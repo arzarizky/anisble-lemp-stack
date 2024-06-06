@@ -1,0 +1,51 @@
+---
+- name: Add Nginx Official Repository Key
+  apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+    
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Create HTML file for root directory
+  ansible.builtin.template:
+    src: ../templates/index.html.j2
+    dest: "{{ nginx_web_root }}/index.html"
+  vars:
+    server_ip: "{{ IP }}"
+
+- name: Create Nginx configuration file
+  ansible.builtin.template:
+    src: ../templates/nginx.conf.j2
+    dest: /etc/nginx/sites-available/default
+
+- name: Start Nginx
+  service:
+    name: nginx
+    state: started
+
+- name: Reload Nginx
+  service:
+    name: nginx
+    state: reloaded
+
+# Check Version Nginx
+- command: sudo nginx -v
+  register: nginx_version
+
+# Check Config Nginx
+- command: sudo nginx -t
+  register: nginx_test_config
+
+# Print Out Version & Config Check Nginx
+- name: Congratulations! Nginx has been successfully installed
+  debug:
+    msg:
+    - Server {{ ansible_host }} test configuration
+    - "{{ nginx_test_config.stderr_lines }}" 
+    - Server {{ ansible_host }} Version
+    - "{{ nginx_version.stderr_lines }}"
+    - Please visit http://{{ ansible_host }} to access your website

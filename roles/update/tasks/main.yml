@@ -1,0 +1,33 @@
+- debug:
+    msg: "Server IP address: {{ ansible_default_ipv4.address }}"
+
+- name: Update APT package cache
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Ensure core packages are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - ca-certificates
+    - lsb-release
+    - apt-transport-https
+    - atool
+    - atop
+    - htop
+    - curl
+    - git
+    - make
+    - mc
+    - software-properties-common
+    - supervisor
+    - tig
+    - tree
+    - vim
+    - unzip
+
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: dist

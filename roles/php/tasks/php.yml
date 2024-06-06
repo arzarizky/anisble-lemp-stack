@@ -1,0 +1,54 @@
+---
+- name: Add PHP PPA repository
+  ansible.builtin.shell:
+    cmd: sudo add-apt-repository ppa:ondrej/php -y
+
+- name: Update APT package cache after adding repository
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: PHP | Install PHP packages
+  ansible.builtin.apt:
+    name: "php{{ php_version }}-{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - fpm
+    - cli
+    - common
+    - curl
+    - gd
+    - odbc
+    - pgsql
+    - mbstring
+    - mysql
+    - xmlrpc
+    - opcache
+    - intl
+    - bz2
+    - xml
+
+- name: Copy PHP info file
+  copy:
+    src: ../files/info.php
+    dest: "{{ nginx_web_root }}/info.php"
+
+- name: Find PHP-FPM Directory
+  ansible.builtin.shell: "find /etc -name php-fpm.conf -exec dirname {} \\; | head -n 1"
+  register: php_fpm_conf_directory
+
+- set_fact:
+    php_ini_directory: "{{ php_fpm_conf_directory.stdout.split('\n')[0] | regex_replace('^([^\\n]+)\\n.*$', '\\1') }}/php.ini"
+
+- name: Ensure PHP timezone is set to {{ php_date_timezone }}
+  ansible.builtin.lineinfile:
+    path: '{{ php_ini_directory }}'
+    regexp: '^;?\s*date.timezone\s*='
+    line: 'date.timezone = {{ php_date_timezone }}'
+    backup: yes
+  become: true
+
+- name: Ensure PHP-FPM is restarted
+  ansible.builtin.service:
+    name: php{{ php_version }}-fpm 
+    state: restarted

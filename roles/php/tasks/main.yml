@@ -1,0 +1,3 @@
+---
+- ansible.builtin.include_tasks: php.yml
+- ansible.builtin.include_tasks: composer.yml

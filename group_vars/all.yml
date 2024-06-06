@@ -1,0 +1,13 @@
+# Nginx Settings
+nginx_web_root: "/var/www/html"
+
+# PHP Settings
+php_version: "8.0" 
+php_date_timezone: Asia/Jakarta
+
+# MySQL Settings
+mysql_root_password: "Root_db@@12345"
+mysql_admindb_password: "Admin_db@12345"
+mysql_database: "ansible_db_test"
+
+IP: "{{ ansible_host }}"

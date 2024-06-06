@@ -1,0 +1,17 @@
+---
+- name: MySQL | install mysql packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  become: true
+  with_items:
+    - mysql-client
+    - mysql-common
+    - mysql-server
+
+- name: Install python3-pymysql
+  apt:
+    name: 
+      - python3-pymysql
+    state: present
+  become: true

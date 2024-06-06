@@ -1,0 +1,12 @@
+---
+- name: PHP | Ensure PHP-FPM is started and enabled
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm"
+    state: started
+    enabled: yes
+
+- name: PHP | Ensure nginx is started and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: yes

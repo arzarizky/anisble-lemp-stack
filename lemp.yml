@@ -1,0 +1,10 @@
+---
+- name: Install LEMP Stack Created By Arza Rizky Nova Ramadhani
+  hosts: web_servers
+  become: yes
+  gather_facts: yes
+  roles:
+    - update
+    - nginx
+    - php
+    - mysql
